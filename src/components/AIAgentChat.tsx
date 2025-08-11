@@ -96,7 +96,7 @@ export const AIAgentChat = () => {
             <Sparkles className="h-5 w-5 text-white" />
           </div>
           <div>
-            <h1 className="font-semibold text-foreground">AI Assistant</h1>
+            <h1 className="font-semibold text-foreground">Sofia</h1>
             <p className="text-sm text-muted-foreground">Always here to help</p>
           </div>
         </div>
