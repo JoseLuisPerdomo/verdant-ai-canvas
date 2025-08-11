@@ -97,7 +97,7 @@ export const AIAgentChat = () => {
           </div>
           <div>
             <h1 className="font-semibold text-foreground">Sofia</h1>
-            <p className="text-sm text-muted-foreground">Always here to help</p>
+            <p className="text-sm text-muted-foreground">La mejor asistenta virtual para tu farmacia</p>
           </div>
         </div>
         
