@@ -28,6 +28,7 @@ export const AIAgentChat = () => {
   const [isTyping, setIsTyping] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [currentConversationId, setCurrentConversationId] = useState("1");
+  const [conversations, setConversations] = useState<Array<{id: string, title: string, messages: Message[]}>>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -40,7 +41,33 @@ export const AIAgentChat = () => {
     scrollToBottom();
   }, [messages, isTyping]);
 
+  const saveCurrentConversation = () => {
+    if (messages.length > 1) { // Only save if there are user messages
+      const title = messages.find(m => m.isUser)?.content.slice(0, 30) + "..." || "Nueva conversación";
+      const existingConversation = conversations.find(c => c.id === currentConversationId);
+      
+      if (!existingConversation) {
+        setConversations(prev => [...prev, {
+          id: currentConversationId,
+          title,
+          messages: [...messages]
+        }]);
+      } else {
+        setConversations(prev => prev.map(c => 
+          c.id === currentConversationId 
+            ? { ...c, messages: [...messages] }
+            : c
+        ));
+      }
+    }
+  };
+
   const handleSendMessage = async (content: string) => {
+    // Auto-save current conversation if it's the first user message and no conversations exist
+    if (conversations.length === 0 && messages.length === 1 && !messages[0].isUser) {
+      // This will be saved after the message is added
+    }
+
     const userMessage: Message = {
       id: Date.now().toString(),
       content,
@@ -48,7 +75,21 @@ export const AIAgentChat = () => {
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     };
 
-    setMessages(prev => [...prev, userMessage]);
+    setMessages(prev => {
+      const newMessages = [...prev, userMessage];
+      // Auto-save if this is the first user message and no conversations exist
+      if (conversations.length === 0 && prev.length === 1 && !prev[0].isUser) {
+        setTimeout(() => {
+          const title = content.slice(0, 30) + (content.length > 30 ? "..." : "");
+          setConversations([{
+            id: currentConversationId,
+            title,
+            messages: newMessages
+          }]);
+        }, 0);
+      }
+      return newMessages;
+    });
     setIsTyping(true);
 
     // Simulate AI response
@@ -70,15 +111,14 @@ export const AIAgentChat = () => {
 
       setMessages(prev => [...prev, aiMessage]);
       setIsTyping(false);
-      
-      toast({
-        title: "Mensaje recibido",
-        description: "Sofia ha respondido a tu mensaje.",
-      });
     }, 1500 + Math.random() * 1000);
   };
 
   const handleNewConversation = () => {
+    // Save current conversation before starting new one
+    saveCurrentConversation();
+    
+    // Start fresh conversation
     setMessages([
       {
         id: "1",
@@ -88,16 +128,25 @@ export const AIAgentChat = () => {
       }
     ]);
     setCurrentConversationId(Date.now().toString());
-    toast({
-      title: "Nueva conversación",
-      description: "Se ha iniciado una nueva conversación.",
-    });
   };
 
   const handleSelectConversation = (id: string) => {
-    setCurrentConversationId(id);
-    // In a real app, you would load the conversation messages here
+    // Save current conversation before switching
+    saveCurrentConversation();
+    
+    const conversation = conversations.find(c => c.id === id);
+    if (conversation) {
+      setMessages(conversation.messages);
+      setCurrentConversationId(id);
+    }
     setIsSidebarOpen(false);
+  };
+
+  const handleDeleteConversation = (id: string) => {
+    setConversations(prev => prev.filter(c => c.id !== id));
+    if (currentConversationId === id) {
+      handleNewConversation();
+    }
   };
 
   const handleAccountClick = () => {
@@ -113,6 +162,8 @@ export const AIAgentChat = () => {
         currentConversationId={currentConversationId}
         onSelectConversation={handleSelectConversation}
         onNewConversation={handleNewConversation}
+        conversations={conversations}
+        onDeleteConversation={handleDeleteConversation}
       />
 
       {/* Main Chat Area */}

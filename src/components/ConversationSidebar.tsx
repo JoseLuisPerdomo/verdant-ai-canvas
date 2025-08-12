@@ -1,15 +1,20 @@
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { MessageSquarePlus, Trash2, Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+interface Message {
+  id: string;
+  content: string;
+  isUser: boolean;
+  timestamp: string;
+}
+
 interface Conversation {
   id: string;
   title: string;
-  lastMessage: string;
-  timestamp: string;
+  messages: Message[];
 }
 
 interface ConversationSidebarProps {
@@ -18,6 +23,8 @@ interface ConversationSidebarProps {
   currentConversationId: string;
   onSelectConversation: (id: string) => void;
   onNewConversation: () => void;
+  conversations: Conversation[];
+  onDeleteConversation: (id: string) => void;
 }
 
 export const ConversationSidebar = ({ 
@@ -25,26 +32,22 @@ export const ConversationSidebar = ({
   onToggle, 
   currentConversationId, 
   onSelectConversation,
-  onNewConversation 
+  onNewConversation,
+  conversations,
+  onDeleteConversation
 }: ConversationSidebarProps) => {
-  const [conversations, setConversations] = useState<Conversation[]>([
-    {
-      id: "1",
-      title: "Consulta sobre medicamentos",
-      lastMessage: "¿Cuál es la dosis recomendada?",
-      timestamp: "10:30"
-    },
-    {
-      id: "2", 
-      title: "Horarios de la farmacia",
-      lastMessage: "¿Están abiertos los domingos?",
-      timestamp: "09:15"
-    }
-  ]);
-
   const deleteConversation = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    setConversations(prev => prev.filter(conv => conv.id !== id));
+    onDeleteConversation(id);
+  };
+
+  const getLastUserMessage = (messages: Message[]) => {
+    const userMessages = messages.filter(m => m.isUser);
+    return userMessages.length > 0 ? userMessages[userMessages.length - 1].content : "Nueva conversación";
+  };
+
+  const getLastTimestamp = (messages: Message[]) => {
+    return messages.length > 0 ? messages[messages.length - 1].timestamp : "";
   };
 
   return (
@@ -109,10 +112,10 @@ export const ConversationSidebar = ({
                     {conversation.title}
                   </h3>
                   <p className="text-xs text-sidebar-foreground/70 mt-1 truncate">
-                    {conversation.lastMessage}
+                    {getLastUserMessage(conversation.messages)}
                   </p>
                   <span className="text-xs text-sidebar-foreground/50 mt-1 block">
-                    {conversation.timestamp}
+                    {getLastTimestamp(conversation.messages)}
                   </span>
                 </div>
                 
