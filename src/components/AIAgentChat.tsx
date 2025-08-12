@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Sparkles, User } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import { cn } from "@/lib/utils";
 
 interface Message {
   id: string;
@@ -104,7 +105,7 @@ export const AIAgentChat = () => {
   };
 
   return (
-    <div className="flex h-full bg-gradient-subtle">
+    <div className="flex h-full bg-gradient-subtle relative">
       {/* Conversation Sidebar */}
       <ConversationSidebar 
         isOpen={isSidebarOpen}
@@ -115,7 +116,7 @@ export const AIAgentChat = () => {
       />
 
       {/* Main Chat Area */}
-      <div className="flex flex-col flex-1 h-full">
+      <div className="flex flex-col h-full w-full">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-border bg-background/80 backdrop-blur-sm">
           <div className="flex items-center gap-3">

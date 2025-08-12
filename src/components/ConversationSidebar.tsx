@@ -59,11 +59,9 @@ export const ConversationSidebar = ({
       
       {/* Sidebar */}
       <div className={cn(
-        "fixed left-0 top-0 h-full bg-sidebar border-r border-sidebar-border z-50 transition-transform duration-300 ease-in-out",
+        "fixed left-0 top-0 h-full bg-sidebar border-r border-sidebar-border z-50 transition-all duration-300 ease-in-out",
         "w-80",
-        isOpen ? "translate-x-0" : "-translate-x-full",
-        "md:relative md:translate-x-0",
-        !isOpen && "md:-translate-x-full"
+        isOpen ? "translate-x-0 opacity-100" : "-translate-x-full opacity-0"
       )}>
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-sidebar-border">
@@ -132,13 +130,13 @@ export const ConversationSidebar = ({
         </ScrollArea>
       </div>
 
-      {/* Toggle Button */}
+      {/* Toggle Button - Only show when sidebar is closed */}
       {!isOpen && (
         <Button
           variant="outline"
           size="icon"
           onClick={onToggle}
-          className="fixed top-4 left-4 z-40 h-10 w-10 bg-background shadow-elegant border-border hover:bg-accent"
+          className="fixed top-4 left-4 z-40 h-10 w-10 bg-background shadow-elegant border-border hover:bg-accent animate-fade-in"
         >
           <Menu className="h-4 w-4" />
         </Button>
