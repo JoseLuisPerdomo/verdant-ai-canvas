@@ -11,10 +11,13 @@ export const TypingIndicator = () => {
       </Avatar>
       
       <div className="bg-ai-bg border border-primary/20 rounded-2xl px-4 py-3 shadow-chat">
-        <div className="flex space-x-1">
-          <div className="w-2 h-2 bg-primary/60 rounded-full animate-typing"></div>
-          <div className="w-2 h-2 bg-primary/60 rounded-full animate-typing [animation-delay:0.2s]"></div>
-          <div className="w-2 h-2 bg-primary/60 rounded-full animate-typing [animation-delay:0.4s]"></div>
+        <div className="flex items-center space-x-2">
+          <div className="flex space-x-1">
+            <div className="w-2 h-2 bg-primary/60 rounded-full animate-typing"></div>
+            <div className="w-2 h-2 bg-primary/60 rounded-full animate-typing [animation-delay:0.2s]"></div>
+            <div className="w-2 h-2 bg-primary/60 rounded-full animate-typing [animation-delay:0.4s]"></div>
+          </div>
+          <p className="text-sm text-muted-foreground ml-2">Sofia está escribiendo...</p>
         </div>
       </div>
     </div>
